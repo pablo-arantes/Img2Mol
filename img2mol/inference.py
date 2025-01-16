@@ -127,7 +127,7 @@ class Img2MolInference(object):
                                [-shear_value, shear_value, -shear_value, shear_value]])
         # Replace 'resample' with 'interpolation' and use transforms.InterpolationMode.BILINEAR
         img_PIL = transforms.RandomAffine(0, translate=None, scale=None,
-                                          shear=shear, interpolation=transforms.InterpolationMode.BILINEAR, fillcolor=255)(img_PIL)  
+                                          shear=shear, interpolation=transforms.InterpolationMode.BILINEAR,  fill=255)(img_PIL)  
         img_PIL = ImageEnhance.Contrast(ImageOps.autocontrast(img_PIL)).enhance(2.0)
         # Replace interpolation=3 with interpolation=transforms.InterpolationMode.BILINEAR
         img_PIL = transforms.Resize((224, 224), interpolation=transforms.InterpolationMode.BILINEAR)(img_PIL)  
