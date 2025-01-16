@@ -102,21 +102,40 @@ class Img2MolInference(object):
         return new_img
 
     @classmethod
+    # def transform_image(cls, image: Image):
+    #     image = cls.fit_image(image)
+    #     img_PIL = transforms.RandomRotation((-15, 15), resample=3, expand=True, center=None, fill=255)(image)
+    #     img_PIL = transforms.ColorJitter(brightness=[0.75, 2.0], contrast=0, saturation=0, hue=0)(img_PIL)
+    #     shear_value = np.random.uniform(0.1, 7.0)
+    #     shear = random.choice([[0, 0, -shear_value, shear_value], [-shear_value, shear_value, 0, 0],
+    #                            [-shear_value, shear_value, -shear_value, shear_value]])
+    #     img_PIL = transforms.RandomAffine(0, translate=None, scale=None,
+    #                                       shear=shear, resample=3, fillcolor=255)(img_PIL)
+    #     img_PIL = ImageEnhance.Contrast(ImageOps.autocontrast(img_PIL)).enhance(2.0)
+    #     img_PIL = transforms.Resize((224, 224), interpolation=3)(img_PIL)
+    #     img_PIL = ImageOps.autocontrast(img_PIL)
+    #     img_PIL = transforms.ToTensor()(img_PIL)
+    #     return img_PIL
+    
     def transform_image(cls, image: Image):
         image = cls.fit_image(image)
-        img_PIL = transforms.RandomRotation((-15, 15), resample=3, expand=True, center=None, fill=255)(image)
+        # Replace 'resample' with 'interpolation' and use transforms.InterpolationMode.BILINEAR
+        img_PIL = transforms.RandomRotation((-15, 15), interpolation=transforms.InterpolationMode.BILINEAR, expand=True, center=None, fill=255)(image)  
         img_PIL = transforms.ColorJitter(brightness=[0.75, 2.0], contrast=0, saturation=0, hue=0)(img_PIL)
         shear_value = np.random.uniform(0.1, 7.0)
         shear = random.choice([[0, 0, -shear_value, shear_value], [-shear_value, shear_value, 0, 0],
                                [-shear_value, shear_value, -shear_value, shear_value]])
+        # Replace 'resample' with 'interpolation' and use transforms.InterpolationMode.BILINEAR
         img_PIL = transforms.RandomAffine(0, translate=None, scale=None,
-                                          shear=shear, resample=3, fillcolor=255)(img_PIL)
+                                          shear=shear, interpolation=transforms.InterpolationMode.BILINEAR, fillcolor=255)(img_PIL)  
         img_PIL = ImageEnhance.Contrast(ImageOps.autocontrast(img_PIL)).enhance(2.0)
-        img_PIL = transforms.Resize((224, 224), interpolation=3)(img_PIL)
+        # Replace interpolation=3 with interpolation=transforms.InterpolationMode.BILINEAR
+        img_PIL = transforms.Resize((224, 224), interpolation=transforms.InterpolationMode.BILINEAR)(img_PIL)  
         img_PIL = ImageOps.autocontrast(img_PIL)
         img_PIL = transforms.ToTensor()(img_PIL)
-        return img_PIL
+        return img_PIL   
 
+    
     def read_image_to_tensor(self, filepath: str,
                              repeats: int = 50):
         extension = filepath.split(".")[-1] in ("jpg", "jpeg", "png")
